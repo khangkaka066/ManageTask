@@ -1,0 +1,11 @@
+import { useEffect, useState } from 'react';
+import { api } from '../api/client';
+import { ProgressBar, StatusBadge } from '../components/Common';
+
+export default function ProjectsPage(){
+const [projects,setProjects]=useState([]);const [members,setMembers]=useState([]);const [form,setForm]=useState({name:'',description:'',status:'Planning',deadline:'',members:[]});
+const load=()=>{api.get('/projects').then(r=>setProjects(r.data));api.get('/members').then(r=>setMembers(r.data));};useEffect(load,[]);
+const submit=async(e)=>{e.preventDefault();await api.post('/projects',{...form,deadline:form.deadline?new Date(form.deadline).toISOString():undefined});setForm({name:'',description:'',status:'Planning',deadline:'',members:[]});load();};
+return <div className='space-y-4'><h2 className='text-2xl font-semibold'>Projects</h2><form onSubmit={submit} className='card grid grid-cols-1 md:grid-cols-5 gap-3'><input className='input' placeholder='Name' value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/><input className='input' placeholder='Description' value={form.description} onChange={e=>setForm({...form,description:e.target.value})}/><select className='input' value={form.status} onChange={e=>setForm({...form,status:e.target.value})}>{['Planning','In Progress','On Hold','Done'].map(s=><option key={s}>{s}</option>)}</select><input className='input' type='date' value={form.deadline} onChange={e=>setForm({...form,deadline:e.target.value})}/><button className='btn-primary'>Create Project</button><select multiple className='input md:col-span-5' value={form.members} onChange={e=>setForm({...form,members:[...e.target.selectedOptions].map(o=>o.value)})}>{members.map(m=><option key={m._id} value={m._id}>{m.name} - {m.role}</option>)}</select></form>
+<div className='card overflow-auto'><table className='w-full text-sm'><thead><tr className='border-b text-left'><th>Name</th><th>Status</th><th>Deadline</th><th>Members</th><th>Progress</th></tr></thead><tbody>{projects.map(p=><tr key={p._id} className='border-b'><td className='py-2'>{p.name}</td><td><StatusBadge status={p.status}/></td><td>{p.deadline?new Date(p.deadline).toLocaleDateString():'-'}</td><td>{p.members?.map(m=>m.name).join(', ')||'-'}</td><td><div className='w-40'><ProgressBar value={p.progress}/></div></td></tr>)}</tbody></table></div></div>
+}

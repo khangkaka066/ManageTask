@@ -1,0 +1,3 @@
+import { NavLink } from 'react-router-dom';
+const items=[['/dashboard','Dashboard'],['/projects','Projects'],['/tasks','Tasks'],['/members','Members']];
+export const SidebarLayout=({children})=><div className='min-h-screen flex'><aside className='w-56 bg-white border-r border-slate-200 p-4'><h1 className='font-bold text-xl mb-6'>TaskManager</h1><nav className='space-y-1'>{items.map(([to,label])=><NavLink key={to} to={to} className={({isActive})=>`block rounded-lg px-3 py-2 text-sm ${isActive?'bg-blue-50 text-blue-600':'hover:bg-slate-100'}`}>{label}</NavLink>)}</nav></aside><main className='flex-1 p-6'>{children}</main></div>;

@@ -1,0 +1,9 @@
+import { useEffect, useState } from 'react';
+import { api } from '../api/client';
+export default function MembersPage(){const [members,setMembers]=useState([]);const [form,setForm]=useState({name:'',email:'',role:''});const [selected,setSelected]=useState(null);
+const load=()=>api.get('/members').then(r=>setMembers(r.data));useEffect(load,[]);
+const submit=async(e)=>{e.preventDefault();await api.post('/members',form);setForm({name:'',email:'',role:''});load();};
+const view=async(id)=>setSelected((await api.get(`/members/${id}`)).data);
+return <div className='space-y-4'><h2 className='text-2xl font-semibold'>Members</h2><form onSubmit={submit} className='card grid grid-cols-1 md:grid-cols-4 gap-3'><input className='input' placeholder='Name' value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/><input className='input' placeholder='Email' value={form.email} onChange={e=>setForm({...form,email:e.target.value})}/><input className='input' placeholder='Role' value={form.role} onChange={e=>setForm({...form,role:e.target.value})}/><button className='btn-primary'>Add member</button></form>
+<div className='grid md:grid-cols-2 gap-4'><div className='card'><table className='w-full text-sm'><thead><tr className='text-left border-b'><th>Name</th><th>Email</th><th>Role</th><th></th></tr></thead><tbody>{members.map(m=><tr key={m._id} className='border-b'><td className='py-2'>{m.name}</td><td>{m.email}</td><td>{m.role}</td><td><button className='text-blue-600' onClick={()=>view(m._id)}>View Tasks</button></td></tr>)}</tbody></table></div><div className='card'><h3 className='font-semibold mb-2'>Member Tasks</h3>{selected?<><p className='mb-2 text-sm'>{selected.member.name}</p><ul className='space-y-2 text-sm'>{selected.tasks.map(t=><li key={t._id}>• {t.title} ({t.project?.name})</li>)}</ul></>:<p className='text-sm text-slate-500'>Select a member</p>}</div></div></div>
+}
