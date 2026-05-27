@@ -1,0 +1,3 @@
+export const StatCard=({title,value})=><div className='card'><p className='text-sm text-slate-500'>{title}</p><p className='text-3xl font-semibold mt-2'>{value}</p></div>;
+export const ProgressBar=({value})=><div className='w-full bg-slate-200 h-2 rounded-full'><div className='h-2 bg-blue-600 rounded-full' style={{width:`${value}%`}}/></div>;
+export const StatusBadge=({status})=>{const map={'To Do':'bg-slate-100 text-slate-700','In Progress':'bg-blue-100 text-blue-700','Review':'bg-amber-100 text-amber-700','Done':'bg-green-100 text-green-700','On Hold':'bg-orange-100 text-orange-700','Planning':'bg-purple-100 text-purple-700'};return <span className={`badge ${map[status]||'bg-slate-100'}`}>{status}</span>}
